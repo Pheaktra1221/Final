@@ -1,4 +1,9 @@
 {
+  "name": "final-monorepo",
+  "private": true,
+  "scripts": {
+    "build": "node scripts/build.js"
+  },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.18",
     "tailwindcss": "^4.1.18"
