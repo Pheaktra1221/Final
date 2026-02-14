@@ -14,18 +14,23 @@ function parseOrigins(str) {
     .filter(Boolean)
 }
 
-const origins = parseOrigins(process.env.CORS_ORIGIN)
-app.use(
-  cors({
-    origin: function (origin, cb) {
-      if (!origin) return cb(null, true)
-      if (origins.length === 0) return cb(null, true)
-      const ok = origins.includes(origin)
-      cb(ok ? null : new Error('Not allowed by CORS'), ok)
-    },
-    credentials: false,
-  })
-)
+const corsOriginEnv = process.env.CORS_ORIGIN
+if (corsOriginEnv === '*') {
+  app.use(cors())
+} else {
+  const origins = parseOrigins(corsOriginEnv)
+  app.use(
+    cors({
+      origin: function (origin, cb) {
+        if (!origin) return cb(null, true)
+        if (origins.length === 0) return cb(null, true)
+        const ok = origins.includes(origin)
+        cb(ok ? null : new Error('Not allowed by CORS'), ok)
+      },
+      credentials: false,
+    })
+  )
+}
 app.use(bodyParser.json())
 
 app.get('/api/health', (req, res) => {
