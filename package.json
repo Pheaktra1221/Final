@@ -1,6 +1,10 @@
 {
   "name": "final-monorepo",
   "private": true,
+  "workspaces": [
+    "server",
+    "School Management"
+  ],
   "scripts": {
     "build": "node scripts/build.js",
     "pages:deploy": "npx wrangler pages deploy ./dist --project-name=finalproject"
