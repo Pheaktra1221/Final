@@ -11,7 +11,13 @@ function parseOrigins(str) {
   if (!str) return []
   return String(str)
     .split(',')
-    .map(s => s.trim())
+    .map(s =>
+      s
+        .trim()
+        .replace(/^`+|`+$/g, '')
+        .replace(/^"+|"+$/g, '')
+        .replace(/^'+|'+$/g, '')
+    )
     .filter(Boolean)
 }
 
@@ -53,7 +59,7 @@ if (corsOriginEnv === '*') {
         if (!origin) return cb(null, true)
         if (origins.length === 0) return cb(null, true)
         const ok = originMatches(origin, origins)
-        cb(ok ? null : new Error('Not allowed by CORS'), ok)
+        cb(null, ok)
       },
       credentials: false,
     })
