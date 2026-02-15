@@ -27,8 +27,11 @@ function getHostFromOrigin(origin) {
 function originMatches(origin, allowed) {
   const host = getHostFromOrigin(origin)
   for (const entry of allowed) {
-    if (entry.startsWith('*.')) {
-      const domain = entry.slice(2).replace(/^https?:\/\//, '')
+    const entryNormalized = entry.replace(/^https?:\/\//, '').replace(/\/$/, '')
+    if (entryNormalized.startsWith('*.')) {
+      const domain = entryNormalized.slice(2)
+      if (host === domain) return true
+      if (host.endsWith('.' + domain)) return true
       if (host.endsWith(domain)) return true
     } else {
       if (origin === entry) return true
