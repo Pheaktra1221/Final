@@ -8,9 +8,19 @@ const form = reactive({
 })
 const store = useAppStore()
 
+import { useRouter } from 'vue-router'
+const router = useRouter()
+
 async function onSubmit(e) {
   e.preventDefault()
-  await store.login(form.username, form.password).catch(() => {})
+  try {
+    const user = await store.login(form.username, form.password)
+    if (user) {
+      router.push({ name: 'dashboard' })
+    }
+  } catch (err) {
+    // ignore here; error shown via store.error
+  }
 }
 </script>
 
