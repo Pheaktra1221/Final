@@ -7,9 +7,7 @@ require('dotenv').config({ path: path.resolve(__dirname, '../..', '.env') })
 
 const app = express()
 
-
-app.use(cors()) // This allows all origins
-
+app.use(cors())
 app.use(bodyParser.json())
 
 ;(function () {
