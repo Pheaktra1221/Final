@@ -15,6 +15,30 @@ function parseOrigins(str) {
     .filter(Boolean)
 }
 
+function getHostFromOrigin(origin) {
+  try {
+    const u = new URL(origin)
+    return u.host
+  } catch {
+    return origin.replace(/^https?:\/\//, '').replace(/\/$/, '')
+  }
+}
+
+function originMatches(origin, allowed) {
+  const host = getHostFromOrigin(origin)
+  for (const entry of allowed) {
+    if (entry.startsWith('*.')) {
+      const domain = entry.slice(2).replace(/^https?:\/\//, '')
+      if (host.endsWith(domain)) return true
+    } else {
+      if (origin === entry) return true
+      const entryHost = getHostFromOrigin(entry)
+      if (host === entryHost) return true
+    }
+  }
+  return false
+}
+
 const corsOriginEnv = process.env.CORS_ORIGIN
 if (corsOriginEnv === '*') {
   app.use(cors())
@@ -25,7 +49,7 @@ if (corsOriginEnv === '*') {
       origin: function (origin, cb) {
         if (!origin) return cb(null, true)
         if (origins.length === 0) return cb(null, true)
-        const ok = origins.includes(origin)
+        const ok = originMatches(origin, origins)
         cb(ok ? null : new Error('Not allowed by CORS'), ok)
       },
       credentials: false,
