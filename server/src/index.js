@@ -75,6 +75,7 @@ app.get('/api/health', (req, res) => {
 app.use('/api/auth', require('./routes/auth'))
 app.use('/api/user', require('./routes/user'))
 app.use('/api/drive', require('./routes/drive'))
+app.use('/api/db', require('./routes/db'))
 
 const port = Number(process.env.PORT || 3001)
 app.listen(port, () => {

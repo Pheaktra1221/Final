@@ -10,7 +10,7 @@ router.post('/login', async (req, res) => {
       return res.status(400).json({ error: 'username and password required' })
     }
     const [rows] = await pool.query(
-      'SELECT ID, Username, Password, Role FROM user WHERE Username = ? LIMIT 1',
+      'SELECT ID, Username, Password, Role FROM `user` WHERE Username = ? LIMIT 1',
       [username]
     )
     if (!rows || rows.length === 0) {
@@ -26,9 +26,9 @@ router.post('/login', async (req, res) => {
       user: { id: user.ID, username: user.Username, role: user.Role },
     })
   } catch (e) {
+    process.stderr.write(String(e?.message || e) + '\n')
     return res.status(500).json({ error: 'server error' })
   }
 })
 
 module.exports = router
-
