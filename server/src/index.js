@@ -7,64 +7,7 @@ require('dotenv').config({ path: path.resolve(__dirname, '../..', '.env') })
 
 const app = express()
 
-function parseOrigins(str) {
-  if (!str) return []
-  return String(str)
-    .split(',')
-    .map(s =>
-      s
-        .trim()
-        .replace(/^`+|`+$/g, '')
-        .replace(/^"+|"+$/g, '')
-        .replace(/^'+|'+$/g, '')
-    )
-    .filter(Boolean)
-}
-
-function getHostFromOrigin(origin) {
-  try {
-    const u = new URL(origin)
-    return u.host
-  } catch {
-    return origin.replace(/^https?:\/\//, '').replace(/\/$/, '')
-  }
-}
-
-function originMatches(origin, allowed) {
-  const host = getHostFromOrigin(origin)
-  for (const entry of allowed) {
-    const entryNormalized = entry.replace(/^https?:\/\//, '').replace(/\/$/, '')
-    if (entryNormalized.startsWith('*.')) {
-      const domain = entryNormalized.slice(2)
-      if (host === domain) return true
-      if (host.endsWith('.' + domain)) return true
-      if (host.endsWith(domain)) return true
-    } else {
-      if (origin === entry) return true
-      const entryHost = getHostFromOrigin(entry)
-      if (host === entryHost) return true
-    }
-  }
-  return false
-}
-
-const corsOriginEnv = process.env.CORS_ORIGIN
-if (corsOriginEnv === '*') {
-  app.use(cors())
-} else {
-  const origins = parseOrigins(corsOriginEnv)
-  app.use(
-    cors({
-      origin: function (origin, cb) {
-        if (!origin) return cb(null, true)
-        if (origins.length === 0) return cb(null, true)
-        const ok = originMatches(origin, origins)
-        cb(null, ok)
-      },
-      credentials: false,
-    })
-  )
-}
+app.use(cors())
 app.use(bodyParser.json())
 
 ;(function () {
